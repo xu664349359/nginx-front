@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> New Document </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style>
+    a{
+        width: 200px;
+        height: 200px;
+        display: none;
+        color: red;
+    }
+    a.current{
+        display: block;
+    }
+  </style>
+    <script>
+    let url = location.search;
+    let code = url.split('=')[1].split('&')[0]
+    console.log(code);
+    </script>
+
+ </head>
+    
+    <body>
+        <a href="javascript:;" class="GOindex">去前台</a>
+        <a href="" id="GOhome">去后台</a>
+    <script src="./lib/jquery.min.js"></script>
+    <!-- <script src="./lib/axios.min.js"></script> -->
+    <script>
+        let Turl = 'http://192.168.1.131:8080/'
+        console.log('qqqqq')
+        $.ajax({
+           method: 'get',
+           url:`${Turl}/dingdingToken?code=${code}`,
+           success:function(res){
+            let token = res.data
+            console.log(token)
+            if (!token) {
+                console.log('登录失败了')
+                return false 
+            }
+            localStorage.setItem('token',token)
+            $.ajax({
+                method:'get',
+                url:`${Turl}user/current`,
+                dataType:'json',
+                headers:{
+                "Accept": "*/*",
+                "authorization": token
+                },
+                success:function(res){
+                    console.log(res)
+                if(res.data.userType === 0){
+                console.log(res.data.nickName)
+                window.parent.location.href ='frontIndex.html'
+                }else if(res.data.userType === 100){
+                    $('a').addClass('current') 
+                    $('.GOindex').click(function(){
+                    window.parent.location.href ='frontIndex.html'
+                    })
+                    $('#GOhome').click(function(){
+                    window.parent.location.href ='http://192.168.1.171/#/user'
+                    })
+                    }
+                }
+            })
+           }, 
+           Error:function(res){
+            console.log(res)
+           }   
+        })
+        //  axios('http://192.168.1.143:8080/dingdingToken?code='+code)
+        // .then((res)=>{
+        //     let token =res.data.data
+        //     axios({
+        //         method:'get',
+        //         headers:{
+        //         "Accept": "*/*",
+        //         "authorization": token
+        //         }
+        //     }).then(res=>{
+        //         console.log(res)
+        //     })
+        // })     
+    </script>
+ </body>
+	
+   
+</html>
